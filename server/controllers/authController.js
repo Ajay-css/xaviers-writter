@@ -18,7 +18,7 @@ export const register = async (req, res) => {
 
     const exists = await User.findOne({ email });
     if (exists)
-      return res.json({ success: false, message: "User already exists" });
+      return res.json({ success: false, message: "User exists" });
 
     const hashed = await bcrypt.hash(password, 10);
 
@@ -28,19 +28,13 @@ export const register = async (req, res) => {
       password: hashed
     });
 
-    const token = generateToken(user._id);
+    // 🔥 Send response immediately
+    res.json({ success: true });
 
-    await sendWelcomeEmail(email, name);
-
-    res.json({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email
-      }
-    });
+    // 🔥 Send email in background
+    sendWelcomeEmail(email, name).catch(err =>
+      console.log("Email error:", err.message)
+    );
 
   } catch (err) {
     res.status(500).json({ message: err.message });
