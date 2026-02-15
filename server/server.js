@@ -13,7 +13,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // ⚠️ production la change pannu
+    origin: process.env.FRONTEND, // ⚠️ production la change pannu
     methods: ["GET", "POST"],
     credentials: true,
   }

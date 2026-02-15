@@ -6,70 +6,98 @@ import { motion } from "framer-motion";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   const [docs, setDocs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔐 Redirect if no token
+  // 🔐 Auth Check + Fetch
   useEffect(() => {
-    if (!token) {
+    const storedToken = localStorage.getItem("token");
+
+    if (!storedToken) {
       navigate("/login");
     } else {
-      fetchDocs();
+      fetchDocs(storedToken);
     }
   }, []);
 
-  const fetchDocs = async () => {
+  // 📄 Fetch Documents
+  const fetchDocs = async (authToken) => {
     try {
-      const res = await axios.get("http://localhost:5000/api/docs", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND}/api/docs`,
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+
       setDocs(res.data);
-      setLoading(false);
+      setLoading(false); // ✅ stop loading
+
     } catch (err) {
-      if (err.response?.status === 401) {
-        localStorage.removeItem("token");
-        navigate("/login");
-      }
+      setLoading(false);
+      localStorage.removeItem("token");
+      navigate("/login");
     }
   };
 
+  // ➕ Create Document
   const createDoc = async () => {
     try {
+      const token = localStorage.getItem("token");
+
       const res = await axios.post(
-        "http://localhost:5000/api/docs",
+        `${import.meta.env.VITE_BACKEND}/api/docs`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       navigate(`/editor/${res.data._id}`);
     } catch (err) {
       console.log(err);
     }
   };
 
+  // 🗑 Delete Document
   const deleteDoc = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/docs/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchDocs();
+      const token = localStorage.getItem("token");
+
+      await axios.delete(
+        `${import.meta.env.VITE_BACKEND}/api/docs/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      fetchDocs(token); // ✅ refetch properly
     } catch (err) {
       console.log(err);
     }
   };
 
+  // 🚪 Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
+  // 📄 Preview Extractor (Quill Delta Support)
   const getPreview = (content) => {
-    if (!content || !content.ops) return "No content yet...";
-    const text = content.ops.map(op => op.insert).join("");
-    return text.slice(0, 150) || "Empty document...";
+    if (!content) return "No content yet...";
+
+    if (typeof content === "string") {
+      return content.slice(0, 150);
+    }
+
+    if (content.ops) {
+      const text = content.ops.map((op) => op.insert).join("");
+      return text.slice(0, 150) || "Empty document...";
+    }
+
+    return "No preview available...";
   };
 
   return (
@@ -167,7 +195,6 @@ export default function Dashboard() {
             ))}
           </div>
         )}
-
       </div>
     </div>
   );

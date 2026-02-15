@@ -17,7 +17,7 @@ export default function Editor() {
 
     // 🔌 Socket
     useEffect(() => {
-        const s = io("http://localhost:5000");
+        const s = io(import.meta.env.VITE_BACKEND);
         setSocket(s);
         return () => s.disconnect();
     }, []);

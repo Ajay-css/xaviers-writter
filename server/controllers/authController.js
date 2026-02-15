@@ -3,13 +3,22 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { sendWelcomeEmail } from "../config/mailer.js";
 
+// 🔐 Generate Token Function
+const generateToken = (userId) => {
+  return jwt.sign(
+    { userId },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+};
+
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
     const exists = await User.findOne({ email });
     if (exists)
-      return res.json({ success: false, message: "User exists" });
+      return res.json({ success: false, message: "User already exists" });
 
     const hashed = await bcrypt.hash(password, 10);
 
@@ -19,9 +28,19 @@ export const register = async (req, res) => {
       password: hashed
     });
 
+    const token = generateToken(user._id);
+
     await sendWelcomeEmail(email, name);
 
-    res.json({ success: true });
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
+    });
 
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -29,28 +48,32 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  console.log("Incoming Email:", email);
-  console.log("Incoming Password:", password);
+    const user = await User.findOne({ email });
 
-  const user = await User.findOne({ email });
-  console.log("User Found:", user);
+    if (!user)
+      return res.json({ success: false, message: "User not found" });
 
-  if (!user)
-    return res.json({ success: false, message: "User not found" });
+    const match = await bcrypt.compare(password, user.password);
 
-  const match = await bcrypt.compare(password, user.password);
-  console.log("Password Match:", match);
+    if (!match)
+      return res.json({ success: false, message: "Wrong password" });
 
-  if (!match)
-    return res.json({ success: false, message: "Wrong password" });
+    const token = generateToken(user._id);
 
-  const token = jwt.sign(
-    { userId: user._id },
-    process.env.JWT_SECRET,
-    { expiresIn: "7d" }
-  );
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
+    });
 
-  res.json({ success: true, token });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
