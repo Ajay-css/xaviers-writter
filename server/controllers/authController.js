@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { sendWelcomeEmail } from "../config/mailer.js";
 
-// 🔐 Generate Token Function
+// 🔐 Generate Token
 const generateToken = (userId) => {
   return jwt.sign(
     { userId },
@@ -28,10 +28,21 @@ export const register = async (req, res) => {
       password: hashed
     });
 
-    // 🔥 Send response immediately
-    res.json({ success: true });
+    // ✅ Generate token properly
+    const token = generateToken(user._id);
 
-    // 🔥 Send email in background
+    // ✅ Send response immediately
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
+    });
+
+    // ✅ Send email in background (non-blocking)
     sendWelcomeEmail(email, name).catch(err =>
       console.log("Email error:", err.message)
     );
