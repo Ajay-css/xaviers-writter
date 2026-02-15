@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scrollRight {
+  0% {
+    transform: translateX(-50%);
+  }
+
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.marquee-left {
+  animation: scrollLeft 35s linear infinite;
+}
+
+.marquee-right {
+  animation: scrollRight 35s linear infinite;
+}
+
+.ql-toolbar {
+  border-radius: 12px 12px 0 0;
+}
+
+.ql-container {
+  border-radius: 0 0 12px 12px;
+  min-height: 900px;
+}
+
+.ql-font-arial {
+  font-family: Arial;
+}
+
+.ql-font-times-new-roman {
+  font-family: "Times New Roman";
+}
+
+.ql-font-courier-new {
+  font-family: "Courier New";
+}
+
+.ql-font-georgia {
+  font-family: Georgia;
+}
+
+.ql-font-tahoma {
+  font-family: Tahoma;
+}
+
+.ql-font-verdana {
+  font-family: Verdana;
+}
+
+.ql-font-comic-sans {
+  font-family: "Comic Sans MS";
+}
+
+.ql-font-impact {
+  font-family: Impact;
+}
+
+.ql-font-poppins {
+  font-family: "Poppins", sans-serif;
+}
+
+.ql-font-inter {
+  font-family: "Inter", sans-serif;
+}
+
+.ql-font-roboto {
+  font-family: "Roboto", sans-serif;
+}
+
+.ql-font-montserrat {
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Default Label */
+.ql-snow .ql-picker.ql-font .ql-picker-label::before {
+  content: "Sans Serif";
+}
+
+/* Dropdown Items */
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="arial"]::before {
+  content: "Arial";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="times-new-roman"]::before {
+  content: "Times New Roman";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="courier-new"]::before {
+  content: "Courier New";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="georgia"]::before {
+  content: "Georgia";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="tahoma"]::before {
+  content: "Tahoma";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="verdana"]::before {
+  content: "Verdana";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="comic-sans"]::before {
+  content: "Comic Sans";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="impact"]::before {
+  content: "Impact";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="poppins"]::before {
+  content: "Poppins";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="inter"]::before {
+  content: "Inter";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="roboto"]::before {
+  content: "Roboto";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="montserrat"]::before {
+  content: "Montserrat";
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="arial"]::before {
+  content: "Arial";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="times-new-roman"]::before {
+  content: "Times New Roman";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="courier-new"]::before {
+  content: "Courier New";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="georgia"]::before {
+  content: "Georgia";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="tahoma"]::before {
+  content: "Tahoma";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="verdana"]::before {
+  content: "Verdana";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="comic-sans"]::before {
+  content: "Comic Sans";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="impact"]::before {
+  content: "Impact";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="poppins"]::before {
+  content: "Poppins";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="inter"]::before {
+  content: "Inter";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="roboto"]::before {
+  content: "Roboto";
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="montserrat"]::before {
+  content: "Montserrat";
+}
