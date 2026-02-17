@@ -6,11 +6,9 @@ import { motion } from "framer-motion";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-
   const [docs, setDocs] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔐 Auth Check + Fetch
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
 
@@ -21,7 +19,6 @@ export default function Dashboard() {
     }
   }, []);
 
-  // 📄 Fetch Documents
   const fetchDocs = async (authToken) => {
     try {
       const res = await axios.get(
@@ -32,8 +29,7 @@ export default function Dashboard() {
       );
 
       setDocs(res.data);
-      setLoading(false); // ✅ stop loading
-
+      setLoading(false);
     } catch (err) {
       setLoading(false);
       localStorage.removeItem("token");
@@ -41,7 +37,6 @@ export default function Dashboard() {
     }
   };
 
-  // ➕ Create Document
   const createDoc = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -60,7 +55,6 @@ export default function Dashboard() {
     }
   };
 
-  // 🗑 Delete Document
   const deleteDoc = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -72,19 +66,17 @@ export default function Dashboard() {
         }
       );
 
-      fetchDocs(token); // ✅ refetch properly
+      fetchDocs(token);
     } catch (err) {
       console.log(err);
     }
   };
 
-  // 🚪 Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
-  // 📄 Preview Extractor (Quill Delta Support)
   const getPreview = (content) => {
     if (!content) return "No content yet...";
 
@@ -103,19 +95,23 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
 
-      {/* 🔥 Navbar */}
-      <div className="flex justify-between items-center px-12 py-6 bg-white border-b shadow-sm">
+      {/* 🔥 Responsive Navbar */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 px-4 sm:px-8 lg:px-12 py-4 bg-white border-b shadow-sm">
+
+        {/* Logo */}
         <div className="flex items-center gap-3">
-          <FileText className="text-blue-600" size={28} />
-          <h1 className="text-2xl font-bold text-gray-800">
+          <FileText className="text-blue-600" size={26} />
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
             Xavier's Writer
           </h1>
         </div>
 
-        <div className="flex items-center gap-4">
+        {/* Buttons */}
+        <div className="flex flex-wrap gap-3">
+
           <button
             onClick={createDoc}
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90 text-white px-6 py-2.5 rounded-xl shadow-lg transition active:scale-95"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90 text-white px-5 sm:px-6 py-2.5 rounded-xl shadow-lg transition active:scale-95 text-sm sm:text-base"
           >
             <Plus size={18} />
             New Document
@@ -123,23 +119,24 @@ export default function Dashboard() {
 
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-xl transition active:scale-95"
+            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 sm:px-5 py-2.5 rounded-xl transition active:scale-95 text-sm sm:text-base"
           >
             <LogOut size={18} />
             Logout
           </button>
+
         </div>
       </div>
 
       {/* 🔥 Content */}
-      <div className="p-12">
+      <div className="px-4 sm:px-8 lg:px-12 py-8">
 
         {loading ? (
-          <div className="text-center text-gray-500 text-lg">
+          <div className="text-center text-gray-500 text-lg mt-20">
             Loading documents...
           </div>
         ) : docs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center mt-32 text-gray-500">
+          <div className="flex flex-col items-center justify-center mt-20 text-gray-500 text-center">
             <FileText size={64} className="mb-6 opacity-40" />
             <h2 className="text-xl font-semibold mb-2">
               No documents yet
@@ -155,16 +152,16 @@ export default function Dashboard() {
             </button>
           </div>
         ) : (
-          <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
             {docs.map((doc, index) => (
               <motion.div
                 key={doc._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="bg-white rounded-2xl p-6 shadow-md hover:shadow-2xl border hover:-translate-y-1 transition duration-300"
+                className="bg-white rounded-2xl p-5 sm:p-6 shadow-md hover:shadow-2xl border hover:-translate-y-1 transition duration-300"
               >
-                <h2 className="font-semibold text-gray-800 mb-3 truncate text-lg">
+                <h2 className="font-semibold text-gray-800 mb-3 truncate text-base sm:text-lg">
                   {doc.title || "Untitled Document"}
                 </h2>
 
@@ -195,6 +192,7 @@ export default function Dashboard() {
             ))}
           </div>
         )}
+
       </div>
     </div>
   );

@@ -7,166 +7,163 @@ import "quill/dist/quill.snow.css";
 const SAVE_INTERVAL = 2000;
 
 export default function Editor() {
-    const { id } = useParams();
-    const wrapperRef = useRef(null);
+  const { id } = useParams();
+  const wrapperRef = useRef(null);
 
-    const [socket, setSocket] = useState(null);
-    const [quill, setQuill] = useState(null);
-    const [title, setTitle] = useState("Untitled Document");
-    const [wordCount, setWordCount] = useState(0);
+  const [socket, setSocket] = useState(null);
+  const [quill, setQuill] = useState(null);
+  const [title, setTitle] = useState("Untitled Document");
+  const [wordCount, setWordCount] = useState(0);
 
-    // 🔌 Socket
-    useEffect(() => {
-        const s = io(import.meta.env.VITE_BACKEND);
-        setSocket(s);
-        return () => s.disconnect();
-    }, []);
+  // 🔌 Socket
+  useEffect(() => {
+    const s = io(import.meta.env.VITE_BACKEND);
+    setSocket(s);
+    return () => s.disconnect();
+  }, []);
 
-    const Font = Quill.import("formats/font");
+  const Font = Quill.import("formats/font");
 
-    Font.whitelist = [
-        "arial",
-        "times-new-roman",
-        "courier-new",
-        "georgia",
-        "tahoma",
-        "verdana",
-        "comic-sans",
-        "impact",
-        "poppins",
-        "inter",
-        "roboto",
-        "montserrat",
-    ];
+  Font.whitelist = [
+    "arial",
+    "times-new-roman",
+    "courier-new",
+    "georgia",
+    "tahoma",
+    "verdana",
+    "comic-sans",
+    "impact",
+    "poppins",
+    "inter",
+    "roboto",
+    "montserrat",
+  ];
 
-    Quill.register(Font, true);
+  Quill.register(Font, true);
 
-    // 📝 Quill Init
-    useEffect(() => {
-        if (!wrapperRef.current) return;
+  // 📝 Quill Init
+  useEffect(() => {
+    if (!wrapperRef.current) return;
 
-        wrapperRef.current.innerHTML = "";
-        const editor = document.createElement("div");
-        editor.style.height = "900px";
-        wrapperRef.current.append(editor);
+    wrapperRef.current.innerHTML = "";
+    const editor = document.createElement("div");
+    wrapperRef.current.append(editor);
 
-        const q = new Quill(editor, {
-            theme: "snow",
-            modules: {
-                toolbar: [
-                    [{ font: Font.whitelist }],
-                    [{ size: ["small", false, "large", "huge"] }],
-                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    const q = new Quill(editor, {
+      theme: "snow",
+      modules: {
+        toolbar: [
+          [{ font: Font.whitelist }],
+          [{ size: ["small", false, "large", "huge"] }],
+          [{ header: [1, 2, 3, 4, 5, 6, false] }],
+          ["bold", "italic", "underline", "strike"],
+          [{ color: [] }, { background: [] }],
+          [{ list: "ordered" }, { list: "bullet" }],
+          [{ align: [] }],
+          ["blockquote", "code-block"],
+          ["link", "image"],
+          ["clean"],
+        ],
+      },
+    });
 
-                    ["bold", "italic", "underline", "strike"],
-                    [{ color: [] }, { background: [] }],
+    q.disable();
+    q.setText("Loading document...");
+    setQuill(q);
+  }, []);
 
-                    [{ script: "sub" }, { script: "super" }],
-                    [{ list: "ordered" }, { list: "bullet" }],
-                    [{ indent: "-1" }, { indent: "+1" }],
-                    [{ align: [] }],
+  // 📄 Load Doc
+  useEffect(() => {
+    if (!socket || !quill) return;
 
-                    ["blockquote", "code-block"],
-                    ["link", "image", "video"],
+    socket.once("load-document", (doc) => {
+      if (!doc) return;
+      quill.setContents(doc.content);
+      setTitle(doc.title || "Untitled Document");
+      quill.enable();
 
-                    ["clean"],
-                ],
-            },
-        });
+      const text = quill.getText();
+      setWordCount(text.trim().split(/\s+/).filter(Boolean).length);
+    });
 
-        q.disable();
-        q.setText("Loading document...");
-        setQuill(q);
-    }, []);
+    socket.emit("join-document", id);
+  }, [socket, quill, id]);
 
-    // 📄 Load Doc
-    useEffect(() => {
-        if (!socket || !quill) return;
+  // ✍️ Send Changes
+  useEffect(() => {
+    if (!socket || !quill) return;
 
-        socket.once("load-document", (doc) => {
-            if (!doc) return;
-            quill.setContents(doc.content);
-            setTitle(doc.title || "Untitled Document");
-            quill.enable();
-        });
+    const handler = (delta, oldDelta, source) => {
+      if (source !== "user") return;
+      socket.emit("send-changes", delta);
 
-        socket.emit("join-document", id);
-    }, [socket, quill, id]);
+      const text = quill.getText();
+      setWordCount(text.trim().split(/\s+/).filter(Boolean).length);
+    };
 
-    // ✍️ Send changes
-    useEffect(() => {
-        if (!socket || !quill) return;
+    quill.on("text-change", handler);
+    return () => quill.off("text-change", handler);
+  }, [socket, quill]);
 
-        const handler = (delta, oldDelta, source) => {
-            if (source !== "user") return;
-            socket.emit("send-changes", delta);
+  // 📥 Receive Changes
+  useEffect(() => {
+    if (!socket || !quill) return;
 
-            const text = quill.getText();
-            setWordCount(text.trim().split(/\s+/).filter(Boolean).length);
-        };
+    socket.on("receive-changes", (delta) => {
+      quill.updateContents(delta);
+    });
 
-        quill.on("text-change", handler);
-        return () => quill.off("text-change", handler);
-    }, [socket, quill]);
+    return () => socket.off("receive-changes");
+  }, [socket, quill]);
 
-    // 📥 Receive changes
-    useEffect(() => {
-        if (!socket || !quill) return;
+  // 💾 Auto Save
+  useEffect(() => {
+    if (!socket || !quill) return;
 
-        socket.on("receive-changes", (delta) => {
-            quill.updateContents(delta);
-        });
+    const interval = setInterval(() => {
+      socket.emit("save-document", {
+        content: quill.getContents(),
+        title,
+      });
+    }, SAVE_INTERVAL);
 
-        return () => socket.off("receive-changes");
-    }, [socket, quill]);
+    return () => clearInterval(interval);
+  }, [socket, quill, title]);
 
-    // 💾 Auto Save
-    useEffect(() => {
-        if (!socket || !quill) return;
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-100">
 
-        const interval = setInterval(() => {
-            socket.emit("save-document", {
-                content: quill.getContents(),
-                title
-            });
-        }, SAVE_INTERVAL);
+      {/* 🔥 Header */}
+      <div className="bg-white border-b sticky top-0 z-50 shadow-sm">
+        <div className="w-full px-4 sm:px-8 lg:px-16 py-4">
 
-        return () => clearInterval(interval);
-    }, [socket, quill, title]);
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="text-xl sm:text-2xl lg:text-3xl font-semibold outline-none w-full bg-transparent"
+          />
 
-    return (
-        <div className="h-screen flex flex-col bg-[#f3f4f6]">
-
-            {/* Top Section */}
-            <div className="bg-white border-b sticky top-0 z-50 shadow-sm">
-                <div className="w-full px-10 py-4">
-
-                    <input
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className="text-3xl font-semibold outline-none w-full bg-transparent"
-                    />
-
-                    <div className="flex justify-between text-sm text-gray-500 mt-2">
-                        <span>Auto Saved</span>
-                        <span>{wordCount} words</span>
-                    </div>
-
-                </div>
-            </div>
-
-            {/* Editor Body */}
-            <div className="flex-1 overflow-auto flex justify-center py-10">
-
-                <div className="bg-white w-full max-w-[1200px] min-h-[1200px] shadow-2xl rounded-xl p-16">
-
-                    <div ref={wrapperRef} className="min-h-[1180px]"></div>
-
-                </div>
-
-            </div>
+          <div className="flex justify-between text-xs sm:text-sm text-gray-500 mt-2">
+            <span>Auto Saved</span>
+            <span>{wordCount} words</span>
+          </div>
 
         </div>
-    );
+      </div>
 
+      {/* 🔥 Editor Area */}
+      <div className="flex-1 overflow-y-auto px-3 sm:px-6 lg:px-10 py-6 sm:py-10 flex justify-center">
+
+        <div className="bg-white w-full max-w-5xl rounded-lg sm:rounded-xl shadow-lg sm:shadow-2xl p-4 sm:p-8 lg:p-12">
+
+          <div
+            ref={wrapperRef}
+            className="min-h-[60vh]"
+          ></div>
+
+        </div>
+
+      </div>
+    </div>
+  );
 }

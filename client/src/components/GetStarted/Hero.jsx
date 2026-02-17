@@ -39,14 +39,16 @@ const Hero = () => {
             <a href="#">Contact</a>
           </div>
 
-          {/* CTA */}
+          {/* CTA + Mobile Menu Icon */}
           <div>
-            <Link to="/login">
+            {/* Desktop Only Button */}
+            <Link to="/login" className="hidden sm:block">
               <button className="px-6 py-2 bg-blue-600 text-white rounded-full">
                 Get Started
               </button>
             </Link>
 
+            {/* Mobile Hamburger */}
             <svg
               onClick={() => setMenuOpen(true)}
               xmlns="http://www.w3.org/2000/svg"
@@ -64,14 +66,16 @@ const Hero = () => {
 
         {/* Mobile Menu */}
         <div
-          className={`sm:hidden fixed inset-0 ${menuOpen ? "w-full" : "w-0"
-            } overflow-hidden bg-white text-gray-800 z-[200] transition-all`}
+          className={`sm:hidden fixed inset-0 ${
+            menuOpen ? "w-full" : "w-0"
+          } overflow-hidden bg-white text-gray-800 z-[200] transition-all`}
         >
           <div className="flex flex-col items-center justify-center h-full gap-8 text-xl font-semibold">
             <a href="#">Home</a>
             <a href="#">Features</a>
             <a href="#">About</a>
             <a href="#">Contact</a>
+
             <Link to="/login">
               <button className="px-6 py-2 bg-blue-600 text-white rounded-full">
                 Get Started
