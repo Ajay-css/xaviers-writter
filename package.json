@@ -1,0 +1,45 @@
+{
+  "name": "xaviers-writer",
+  "version": "1.0.0",
+  "description": "Xaviers Writer Desktop Application",
+  "author": "Ajay",
+  "main": "electron.js",
+  "type": "module",
+  "scripts": {
+    "dev": "electron .",
+    "start": "electron .",
+    "build:frontend": "cd client && npm run build",
+    "dist": "npm run build:frontend && electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^28.3.3",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.xaviers.writer",
+    "productName": "Xaviers Writer",
+    "electronVersion": "28.3.3",
+    "copyright": "Copyright © 2026 Ajay",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron.js",
+      "preload.js",
+      "client/dist/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/favicon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Xaviers Writer",
+      "license": "license.txt"
+    }
+  }
+}

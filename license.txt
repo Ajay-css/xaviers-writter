@@ -1,0 +1,65 @@
+XAVIERS WRITER
+End User License Agreement (EULA)
+
+Last Updated: January 2026
+
+IMPORTANT – PLEASE READ CAREFULLY:
+
+This End User License Agreement ("Agreement") is a legal agreement between you ("User") and Ajay ("Author") for the software product known as Xaviers Writer, including all associated files, documentation, and updates ("Software").
+
+By installing, copying, or using the Software, you agree to be bound by the terms of this Agreement. If you do not agree to these terms, do not install or use the Software.
+
+1. LICENSE GRANT
+
+The Author grants you a non-exclusive, non-transferable, revocable license to install and use Xaviers Writer on your personal or business devices in accordance with this Agreement.
+
+You may:
+
+* Install and use the Software for personal or commercial use.
+* Create and edit documents using the Software.
+
+You may NOT:
+
+* Resell, sublicense, or distribute the Software without written permission.
+* Reverse engineer, decompile, or attempt to extract source code.
+* Modify or create derivative versions of the Software for redistribution.
+
+2. OWNERSHIP
+
+The Software is licensed, not sold.
+All rights, title, and interest in and to Xaviers Writer remain the exclusive property of the Author.
+
+3. UPDATES
+
+The Author may provide updates, improvements, or modifications at their discretion. Updates may be automatic or manual.
+
+4. DISCLAIMER OF WARRANTY
+
+The Software is provided "AS IS" without warranty of any kind, express or implied, including but not limited to merchantability or fitness for a particular purpose.
+
+The Author does not guarantee that the Software will be error-free or uninterrupted.
+
+5. LIMITATION OF LIABILITY
+
+In no event shall the Author be liable for any indirect, incidental, special, consequential, or punitive damages arising out of the use or inability to use the Software.
+
+6. TERMINATION
+
+This license is effective until terminated.
+It will terminate automatically if you fail to comply with any term of this Agreement. Upon termination, you must uninstall and destroy all copies of the Software.
+
+7. GOVERNING LAW
+
+This Agreement shall be governed by and construed in accordance with the laws of India.
+
+8. CONTACT
+
+For support or inquiries:
+
+Email: needfs245@gmail.com
+Website: https://xaviers.writer.vercel.app
+
+By clicking "I Agree" during installation, you acknowledge that you have read and understood this Agreement and agree to be bound by its terms.
+
+Copyright © 2026 Ajay
+All Rights Reserved.
