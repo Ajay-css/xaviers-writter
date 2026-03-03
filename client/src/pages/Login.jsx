@@ -3,7 +3,7 @@ import { useState } from "react"
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
-import loginImg from "../assets/login.webp"
+import loginImg from "../assets/Login.webp"
 
 export default function Login() {
 
