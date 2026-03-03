@@ -113,7 +113,7 @@ function createWindow() {
     mainWindow.loadFile(distPath);
   } else {
     // In development, try the Vite dev server first
-    mainWindow.loadURL("http://localhost:5173").catch(() => {
+    mainWindow.loadURL("http://xaviers-writer.vercel.app").catch(() => {
       console.log("Dev server not running. Loading from built files (client/dist)...");
       mainWindow.loadFile(distPath);
     });
